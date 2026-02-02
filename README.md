@@ -1,5 +1,5 @@
 
-This is the repository that contains source code for the [dMARK website](https://dmark-watermarking.github.io).
+This is the repository that contains source code for the [dgMARK website](https://dgmark-watermarking.github.io).
 
 ```
 @article{hong2026dgmark,
