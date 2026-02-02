@@ -1,1 +1,664 @@
-preparing...
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"> 
+  <meta name="description"
+        content="dgMARK project page.">
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" />
+  <title>dgMARK: Decoding-Guided Watermarking for Discrete Diffusion Language Models</title>
+
+
+  <script>
+  MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']]
+    }
+  };
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.svg">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">
+            <img src="./static/images/favicon.svg" class="title-icon" alt="">
+            <span class="dnerf">dgMARK</span>: Decoding-Guided Watermarking for Diffusion Language Models</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://pyomin.github.io">Pyo Min Hong</a><sup>1</sup>,</span>
+            <span class="author-block">
+              <a href="https://albert-no.github.io">Albert No</a><sup>2</sup>,</span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>Hongik University</span>
+            <span class="author-block"><sup>2</sup>Yonsei University</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <span class="link-block">
+                <a href="https://arxiv.org/pdf/2601.22985"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://arxiv.org/abs/2601.22985"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <!-- Code Link. -->
+              <!-- <span class="link-block">
+                <a href="https://github.com/google/nerfies"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code</span>
+                  </a>
+              </span> -->
+
+
+
+            </div>
+
+          </div>
+  
+          <div class="is-size-5 publication-authors">
+           <span class="tldr" style="font-weight: bolder;">TL;DR:</span>  Watermark text from diffusion LLMs by steering <span class="tldr">decoding order</span>, not token probabilities, <br> achieving <span class="tldr">robust</span> and <span class="tldr">low-distortion</span> provenance.
+           <div style="height: 10px;"></div>
+          </div>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+  
+</section>
+
+<section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <img id="teaser" src="./static/images/dgmark.gif" style="width: 90%; margin-left: 5%; margin-top: -50px; height: auto;" />
+      <h2 class="subtitle has-text-centered" style="font-size: 1.1rem;">
+        <div class="content has-text-justified">
+        <img src="./static/images/favicon.svg" class="title-icon" alt=""> <span class="dnerf">dgMARK</span> embeds a watermark by guiding <i>which positions are unmasked</i>, without altering token probabilities.</div>
+      </h2>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Introduction</h2>
+        <div class="content has-text-justified">
+            <p>We propose <span class="dnerf">dgMARK</span>, a decoding-guided watermarking method for discrete diffusion language models (dLLMs). 
+            Unlike autoregressive models, dLLMs can generate tokens in arbitrary order. 
+            While an ideal conditional predictor would be invariant to this order, practical dLLMs exhibit strong sensitivity to the unmasking order, 
+            creating a new channel for watermarking.</p> 
+            <p><span class="dnerf">dgMARK</span> steers the unmasking order toward positions whose high-reward candidate tokens
+             satisfy a simple parity constraint induced by a binary hash, without explicitly reweighting the model's learned probabilities. 
+            The method is plug-and-play with common decoding strategies (e.g., confidence, entropy, and margin-based ordering) 
+            and can be strengthened with a one-step lookahead variant.</p> 
+            <p>Watermarks are detected via elevated parity-matching statistics, 
+            and a sliding-window detector ensures robustness under post-editing operations including insertion, deletion, substitution, and paraphrasing.</p>
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Abstract. -->
+
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Watermarking beyond left-to-right generation</h2> 
+    <div class="content has-text-justified">
+      <i>discrete diffusion language models</i> (dLLMs) have emerged as a strong alternative to the autoregressive paradigm.
+      dLLMs iteratively denoise masked sequences and can finalize tokens in <i>arbitrary order</i>,
+      supporting adaptive decoding strategies and controllable generation.
+      
+    </div>
+  <div class="container is-max-desktop">
+    <div class="is-centered">
+
+
+
+        <div class="content is-max-desktop">
+          <img src="./static/images/txt_gen.gif" width="100%"/>
+          <p>
+            <div style="height: 2px;"></div>
+            <b>This order-agnostic decoding both creates challenges and opens new opportunities for watermarking.</b> Here, We exploit the decoding order itself as the primary watermarking channel.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section-tight">
+  <div class="content container is-max-desktop">
+    <h2 class="title is-3">Decoding-guided Watermarking for dLLMs</h2>
+      <p>
+        The illustration below contrasts three paradigms: existing watermarking schemes, generic dLLMs decoding, and decoding-guided watermarking.
+      </strong></p>
+
+    
+          <!-- Overview -->
+      <div class="content has-text-centered">
+        <div class="columns">
+          <div class="col-md-3">
+            <img src="./static/images/existing_wm.gif" height="30%"/>
+          </div>
+          <div class="col-md-3">
+            <img src="./static/images/gen_dlm.gif" height="30%"/>
+          </div>
+          <div class="col-md-3">
+            <img src="./static/images/dgmark2.gif" height="30%"/>
+          </div>
+        </div>
+      </div>
+
+    
+    <ul style="margin-left: 20px;">
+      <li><strong style="color: #0066cc;">Existing Watermarking Schemes.</strong> Existing autoregressive watermarking methods generate green/red token sets 
+        by hashing the prefix (previous tokens) and embed watermark signals by biasing the sampling distribution toward green tokens.</li> 
+      <li><strong style="color: #800080;">Generic dLLMs Decoding.</strong> In contrast, dLLMs do not strictly follow left-to-right generation; 
+        instead, they iteratively denoise masked sequences, prioritizing high reward (e.g., confidence) masked positions and finalizing tokens in a flexible order.
+      </li>
+      <li><strong style="color: #009900;">Decoding-guided Watermarking.</strong> <span class="dnerf">dgMARK</span> 
+        leverages these rewards and embeds watermark signals by prioritizing high reward tokens that satisfy the parity condition.</li>
+    </ul>
+    
+
+    We summarize <strong>generic dLLM decoding</strong> and our <strong>decoding-guided watermarking</strong> in the following pseudocode.
+
+    <div class="columns is-desktop" style="margin-top: 20px;">
+        <div class="column">
+            <h2 class="title is-4">Generic dLLMs Decoding</h2>
+            <div class="font-code content">
+                <p><strong>Require:</strong> Prompt $x$; output length $n$; predictor $p_\theta$; decoding strategy $\mathcal{F}$</p>
+                <ol>
+                    <li><span>$y \gets [\text{MASK}]^n$; &nbsp;&nbsp;  $\mathcal{I} \gets \emptyset$
+                    <li><span><span class="keyword">for</span> $i = 1, \dots, n$ <span class="keyword">do</span></span></li>
+                    <li style="padding-left: 2em;"><span>Get $\{(r_j, v_j) = \mathcal{F}(j; p_{\theta}, x, y_{\mathcal{I}})\mid j\notin\mathcal{I}\}$</span></li>
+                    <li style="padding-left: 2em;"><span>$\mathcal{C} \gets \{ j \notin \mathcal{I} \}$</span></li>
+                    <li style="padding-left: 2em;"><span>$k^\star \gets \arg\max_{j \in \mathcal{C}} r_j$</span></li>
+                    <li style="padding-left: 2em;"><span>$y_{k^\star} \gets v_{k^\star}$ ; &nbsp;&nbsp; $\mathcal{I} \gets \mathcal{I} \cup \{k^\star\}$</span></li>
+                    <li><span><span class="keyword">end for</span></li>
+                    <li><span><span class="keyword">return</span> $y$</span></li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="column">
+            <h2 class="title is-4"><span class="dnerf">dgMARK</span>: Watermarks by Decoding</h2>
+            <div class="font-code content">
+                <p><strong>Require:</strong> Prompt $x$; output length $n$; predictor $p_\theta$; decoding strategy $\mathcal{F}$; parity matching set $\mathcal{G}_j$</p>
+                <ol>
+                    <li><span>$y \gets [\text{MASK}]^n$; &nbsp;&nbsp; $\mathcal{I} \gets \emptyset$
+                    <li><span><span class="keyword">for</span> $i = 1, \dots, n$ <span class="keyword">do</span></span></li>
+                    <li style="padding-left: 2em;"><span>Get $\{(r_j, v_j) = \mathcal{F}(j; p_{\theta}, x, y_{\mathcal{I}})\mid j\notin\mathcal{I}\}$ </span></li>
+                    <li style="padding-left: 2em;"><span><font color="blue">$\mathcal{C} \gets \{ j \notin \mathcal{I} \mid v_j \in \mathcal{G}_j \}$</font></span></li>
+                    <li style="padding-left: 2em;"><span><span class="keyword">if</span> $\mathcal{C} = \emptyset$ <span class="keyword">then</span> $\mathcal{C} \gets \{\, j \notin \mathcal{I} \,\}$ <span class="keyword">end if</span></span></li>
+                    <li style="padding-left: 2em;"><span>$k^\star \gets \arg\max_{j \in \mathcal{C}} r_j$</span></li>
+                    <li style="padding-left: 2em;"><span>$y_{k^\star} \gets v_{k^\star}$; &nbsp;&nbsp; $\mathcal{I} \gets \mathcal{I} \cup \{k^\star\}$</span></li>
+                    <li><span><span class="keyword">end for</span></li>
+                    <li><span><span class="keyword">return</span> $y$</span></li>
+                </ol>
+            </div>
+        </div>
+    </div>
+    
+
+    </div>
+ 
+
+</section>
+
+
+
+<section class="section">
+  
+
+  <div class="container is-max-desktop">
+    <div class="divider"></div>
+    <h2 class="title is-3">Experimental Results</h2> 
+    <h3 class="title is-5">Watermark Detectability</h3>
+
+     
+  <div class="container is-max-desktop">
+    <div class="is-centered">
+
+        <div class="table-container">
+          <table class="fancy-table">
+              <thead>
+                  <tr>
+                      <th rowspan="2" class="main-header">Method</th>
+                      <th rowspan="2" class="v-line"></td>PPL $\downarrow$</th>
+                      <th rowspan="2">FPR $\downarrow$</th>
+                      <th rowspan="2">TNR $\uparrow$</th>
+                      <th rowspan="2">TPR $\uparrow$</th>
+                      <th rowspan="2" class="v-line">FNR $\downarrow$</th>
+                      <th colspan="4" class="header-group">TPR @ FPR $\uparrow$</th>
+                  </tr>
+                  <tr>
+                      <th>10%</th>
+                      <th>1%</th>
+                      <th>0.1%</th>
+                      <th>0.01%</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr class="group-header">
+                      <td class="method-col">Greedy Sampling</td> 
+                      <td class="v-line num-cell no-bold">4.03</td>
+                      <td></td> <td></td>
+                      <td></td>
+                      <td class="v-line"></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                  </tr>
+                  <tr>
+                      <td>KGW ($\delta$ = 1)</td>
+                      <td class="v-line">4.33</td><td>0.0</td><td>1.0</td><td>0.072</td><td class="v-line">0.928</td><td>88.52</td><td>62.68</td><td>30.14</td><td>11.48</td>
+                  </tr>
+                  <tr>
+                      <td>KGW ($\delta$ = 2)</td>
+                      <td class="v-line">5.02</td><td>0.0</td><td>1.0</td><td>0.866</td><td class="v-line">0.134</td><td>100.00</td><td>97.31</td><td>93.01</td><td>97.63</td>
+                  </tr>
+                  <tr class="highlight-row">
+                      <td>KGW ($\delta$ = 3)</td>
+                      <td class="v-line">5.83</td><td>0.0</td><td>1.0</td><td>0.970</td><td class="v-line">0.030</td><td>100.00</td><td>100.00</td><td>98.52</td><td>97.78</td>
+                  </tr>
+                  <tr>
+                      <td>PATTERN-MARK ($\delta$ = 1)</td>
+                      <td class="v-line">4.11</td><td>0.0</td><td>1.0</td><td>0.000</td><td class="v-line">1.000</td><td>21.76</td><td>4.17</td><td>1.39</td><td>0.00</td>
+                  </tr>
+                  <tr>
+                      <td>PATTERN-MARK ($\delta$ = 2)</td>
+                      <td class="v-line">4.72</td><td>0.0</td><td>1.0</td><td>0.040</td><td class="v-line">0.960</td><td>73.50</td><td>48.50</td><td>20.50</td><td>12.00</td>
+                  </tr>
+                  <tr class="highlight-row">
+                      <td>PATTERN-MARK ($\delta$ = 3)</td>
+                      <td class="v-line">5.86</td><td>0.0</td><td>1.0</td><td>0.584</td><td class="v-line">0.416</td><td>96.26</td><td>91.59</td><td>87.38</td><td>78.97</td>
+                  </tr>
+
+                  <tr class="highlight-green">
+                      <td class="special-text">dgMARK</td>
+                      <td class="v-line"><strong>4.44</strong></td><td>0.0</td><td>1.0</td><td>0.540</td><td class="v-line">0.460</td><td>97.86</td><td>91.98</td><td>76.47</td><td>60.96</td>
+                  </tr>
+                  <tr class="highlight-green">
+                      <td style="padding-left:30px">&nbsp;&nbsp;&nbsp;+ 3-beam</td>
+                      <td class="v-line"><u>4.75</u></td><td>0.0</td><td>1.0</td><td>0.963</td><td class="v-line">0.037</td><td>100.00</td><td>99.54</td><td>98.62</td><td>97.25</td>
+                  </tr>
+                  <tr class="highlight-green">
+                      <td style="padding-left:30px">&nbsp;&nbsp;&nbsp;+ 5-beam</td>
+                      <td class="v-line">5.01</u></td><td>0.0</td><td>1.0</td><td>0.987</td><td class="v-line">0.013</td><td>100.00</td><td>100.00</td><td>99.56</td><td>98.69</td>
+                  </tr>
+                  <tr class="highlight-green">
+                      <td style="padding-left:30px">&nbsp;&nbsp;&nbsp;+ 8-beam</td>
+                      <td class="v-line">5.16</u></td><td>0.0</td><td>1.0</td><td>0.991</td><td class="v-line">0.008</td><td>100.00</td><td>100.00</td><td>100.00</td><td>99.12</td>
+                  </tr>
+
+                  <tr class="group-header top-line">
+                      <td class="method-col">Multinomial Sampling</td>
+                      <td class="v-line num-cell no-bold">4.21</td>
+                      <td></td> <td></td>
+                      <td></td>
+                      <td class="v-line"></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                  </tr>
+                  <tr>
+                      <td>KGW ($\delta$ = 1)</td>
+                      <td class="v-line">5.59</td><td>0.0</td><td>1.0</td><td>0.107</td><td class="v-line">0.893</td><td>89.80</td><td>60.91</td><td>32.99</td><td>14.21</td>
+                  </tr>
+                  <tr>
+                      <td>KGW ($\delta$ = 2)</td>
+                      <td class="v-line">6.38</td><td>0.0</td><td>1.0</td><td>0.876</td><td class="v-line">0.124</td><td>99.41</td><td>98.82</td><td>97.65</td><td>91.18</td>
+                  </tr>
+                  <tr class="highlight-row">
+                      <td>KGW ($\delta$ = 3)</td>
+                      <td class="v-line">7.87</td><td>0.0</td><td>1.0</td><td>0.984</td><td class="v-line">0.016</td><td>100.0</td><td>99.21</td><td>99.21</td><td>98.41</td>
+                  </tr>
+                  <tr>
+                      <td>PATTERN-MARK ($\delta$ = 1)</td>
+                      <td class="v-line">5.45</td><td>0.0</td><td>1.0</td><td>0.000</td><td class="v-line">1.000</td><td>25.26</td><td>5.67</td><td>1.55</td><td>0.00</td>
+                  </tr>
+                  <tr>
+                      <td>PATTERN-MARK ($\delta$ = 2)</td>
+                      <td class="v-line">6.33</td><td>0.0</td><td>1.0</td><td>0.060</td><td class="v-line">0.940</td><td>78.00</td><td>53.50</td><td>27.50</td><td>16.50</td>
+                  </tr>
+                  <tr class="highlight-row">
+                      <td>PATTERN-MARK ($\delta$ = 3)</td>
+                      <td class="v-line">7.69</td><td>0.0</td><td>1.0</td><td>0.586</td><td class="v-line">0.414</td><td>98.99</td><td>95.96</td><td>91.41</td><td>83.33</td>
+                  </tr>            
+                  <tr class="highlight-green">
+                      <td class="special-text">dgMARK</td>
+                      <td class="v-line"><strong>5.27</strong></td><td>0.0</td><td>1.0</td><td>0.929</td><td class="v-line">0.071</td><td>100.0</td><td>100.0</td><td>99.41</td><td>95.29</td>
+                  </tr>
+                  <tr class="highlight-green">
+                      <td style="padding-left:30px">&nbsp;&nbsp;&nbsp;+ 3-beam</td>
+                      <td class="v-line"><u>5.40</u></td><td>0.0</td><td>1.0</td><td>1.000</td><td class="v-line">0.000</td><td>100.00</td><td>100.00</td><td>100.00</td><td>100.00</td>
+                  </tr>
+                  <tr class="highlight-green">
+                      <td style="padding-left:30px">&nbsp;&nbsp;&nbsp;+ 5-beam</td>
+                      <td class="v-line">5.76</u></td><td>0.0</td><td>1.0</td><td>1.000</td><td class="v-line">0.000</td><td>100.00</td><td>100.00</td><td>100.00</td><td>100.00</td>
+                  </tr>
+                  <tr class="highlight-green">
+                      <td style="padding-left:30px">&nbsp;&nbsp;&nbsp;+ 8-beam</td>
+                      <td class="v-line">6.00</u></td><td>0.0</td><td>1.0</td><td>1.000</td><td class="v-line">0.000</td><td>100.00</td><td>100.00</td><td>100.00</td><td>100.00</td>
+                  </tr>
+              </tbody>
+          </table>
+          <p>
+            <div style="height: 10px;"></div>
+            <b><i>Table 1.</b></i>
+            Empirical results under greedy and multinomial sampling with LLaDA 1.5 on the C4 dataset, reporting perplexity (PPL) and detection metrics. Greedy and multinomial sampling represent the non-watermarked baselines.
+          </p>
+      </div>
+      <!--/ texts. -->
+    <div class="content has-text-justified">
+        Table 1 compares <span class="dnerf">dgMARK</span> with two probability-biasing baselines (KGW and PATTERN-MARK) under multiple watermark strengths $\delta \in \{1,2,3\}$. 
+        The main takeaway is that <span class="dnerf">dgMARK</span> provides strong detectability while better preserving text quality.
+        In particular, <span class="dnerf">dgMARK</span> attains high detectability with 3-beam search, and detectability further improves with larger beam sizes, 
+        while its perplexity increase remains consistently smaller than that of the probability-biasing schemes.
+    </div>
+
+  <h3 class="title is-5">Text Generation Quality</h3>
+
+    <div class="table-container">
+        <table class="fancy-table">
+            <thead>
+                <tr>
+                    <th rowspan="2" class="model-col">Model</th>
+                    <th rowspan="2">Method</th>
+                    <th colspan="3" class="header-group">Greedy Sampling</th>
+                    <th colspan="3" class="header-group">Multinomial Sampling</th>
+                </tr>
+                <tr>
+                    <th class="num-cell" style="font-size: 14px !important; width: 8%; text-align: center;">MMLU<br>(Acc $\uparrow$)</th>
+                    <th class="num-cell" style="font-size: 14px !important; width: 8%; text-align: center;">GSM8K<br>(Acc $\uparrow$)</th>
+                    <th class="num-cell" style="font-size: 14px !important; width: 8%; text-align: center;">HumanEval<br>(Pass@1 $\uparrow$)</th>
+                    <th class="num-cell" style="font-size: 14px !important; width: 8%; text-align: center;">MMLU<br>(Acc $\uparrow$)</th>
+                    <th class="num-cell" style="font-size: 14px !important; width: 8%; text-align: center;">GSM8K<br>(Acc $\uparrow$)</th>
+                    <th class="num-cell" style="font-size: 14px !important; width: 8%; text-align: center;">HumanEval<br>(Pass@1 $\uparrow$)</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="group-header">
+                    <td rowspan="5" class="model-col">LLaDA</td>
+                    <td class="method-col">Non-watermarked</td>
+                    <td class="num-cell no-bold">0.648</td>
+                    <td class="num-cell no-bold">0.797</td>
+                    <td class="num-cell no-bold" style="text-align: center; padding-right: 5% !important;"">0.427</td>
+                    <td class="num-cell no-bold">0.594</td>
+                    <td class="num-cell no-bold">0.775</td>
+                    <td class="num-cell no-bold" style="text-align: center; padding-right: 5% !important;">0.360</td>
+                </tr>
+                <tr>
+                    <td class="method-col">KGW</td>
+                    <td class="num-cell">0.558</td>
+                    <td class="num-cell">0.662</td>
+                    <td class="num-cell" style="text-align: center; padding-right: 5% !important;">0.092</td>
+                    <td class="num-cell">0.520</td>
+                    <td class="num-cell">0.464</td>
+                    <td class="num-cell" style="text-align: center; padding-right: 5% !important;">0.055</td>
+                </tr>
+                <tr>
+                    <td class="method-col">PATTERN-MARK</td>
+                    <td class="num-cell">0.570</td>
+                    <td class="num-cell">0.635</td>
+                    <td class="num-cell" style="text-align: center; padding-right: 5% !important;">0.134</td>
+                    <td class="num-cell">0.532</td>
+                    <td class="num-cell">0.438</td>
+                    <td class="num-cell" style="text-align: center; padding-right: 5% !important;">0.073</td>
+                </tr>
+                <tr class="highlight-green">
+                    <td class="method-col special-text">dgMARK</td>
+                    <td class="num-cell"><strong>0.647</strong></td>
+                    <td class="num-cell"><strong>0.787</strong></td>
+                    <td class="num-cell" style="text-align: center; padding-right: 5% !important;"><strong>0.280</strong></td>
+                    <td class="num-cell"><strong>0.588</strong></td>
+                    <td class="num-cell"><strong>0.735</strong></td>
+                    <td class="num-cell" style="text-align: center; padding-right: 5% !important;"><strong>0.226</strong></td>
+                </tr>
+                <tr class="highlight-green">
+                    <td class="method-col indent-3-beam">dgMARK +3-beam</td>
+                    <td class="num-cell"><strong>0.647</strong></td>
+                    <td class="num-cell">0.771</td>
+                    <td class="num-cell" style="text-align: center; padding-right: 5% !important;">0.268</td>
+                    <td class="num-cell">0.580</td>
+                    <td class="num-cell">0.678</td>
+                    <td class="num-cell" style="text-align: center; padding-right: 5% !important;">0.152</td>
+                </tr>
+
+                <tr class="group-header top-line">
+                    <td rowspan="5" class="model-col"">LLaDA 1.5</td>
+                    <td class="method-col">Non-watermarked</td>
+                    <td class="num-cell no-bold">0.650</td>
+                    <td class="num-cell no-bold">0.821</td>
+                    <td class="num-cell no-bold" style="text-align: center; padding-right: 5% !important;">0.400</td>
+                    <td class="num-cell no-bold">0.601</td>
+                    <td class="num-cell no-bold">0.808</td>
+                    <td class="num-cell no-bold" style="text-align: center; padding-right: 5% !important;">0.348</td>
+                </tr>
+                <tr>
+                    <td class="method-col">KGW</td>
+                    <td class="num-cell">0.567</td>
+                    <td class="num-cell">0.726</td>
+                    <td class="num-cell" style="text-align: center; padding-right: 5% !important;">0.104</td>
+                    <td class="num-cell">0.536</td>
+                    <td class="num-cell">0.582</td>
+                    <td class="num-cell" style="text-align: center; padding-right: 5% !important;">0.092</td>
+                </tr>
+                <tr>
+                    <td class="method-col">PATTERN-MARK</td>
+                    <td class="num-cell">0.579</td>
+                    <td class="num-cell">0.670</td>
+                    <td class="num-cell" style="text-align: center; padding-right: 5% !important;">0.152</td>
+                    <td class="num-cell">0.540</td>
+                    <td class="num-cell">0.513</td>
+                    <td class="num-cell" style="text-align: center; padding-right: 5% !important;">0.079</td>
+                </tr>
+                <tr class="highlight-green">
+                    <td class="method-col special-text">dgMARK</td>
+                    <td class="num-cell"><strong>0.649</strong></td>
+                    <td class="num-cell"><strong>0.814</strong></td>
+                    <td class="num-cell" style="text-align: center; padding-right: 5% !important;"><strong>0.317</strong></td>
+                    <td class="num-cell"><strong>0.596</strong></td>
+                    <td class="num-cell"><strong>0.759</strong></td>
+                    <td class="num-cell" style="text-align: center; padding-right: 5% !important;"><strong>0.201</strong></td>
+                </tr>
+                <tr class="highlight-green">
+                    <td class="method-col indent-3-beam">dgMARK +3-beam</td>
+                    <td class="num-cell"><strong>0.649</strong></td>
+                    <td class="num-cell">0.774</td>
+                    <td class="num-cell" style="text-align: center; padding-right: 5% !important;">0.207</td>
+                    <td class="num-cell">0.588</td>
+                    <td class="num-cell">0.723</td>
+                    <td class="num-cell" style="text-align: center; padding-right: 5% !important;">0.134</td>
+                </tr>
+
+                <tr class="group-header top-line">
+                    <td rowspan="5" class="model-col">Dream</td>
+                    <td class="method-col">Non-watermarked</td>
+                    <td class="num-cell no-bold">0.700</td>
+                    <td class="num-cell no-bold">0.800</td>
+                    <td class="num-cell no-bold" style="text-align: center; padding-right: 5% !important;">0.427</td>
+                    <td class="num-cell no-bold">0.630</td>
+                    <td class="num-cell no-bold">0.789</td>
+                    <td class="num-cell no-bold" style="text-align: center; padding-right: 5% !important;">0.420</td>
+                </tr>
+                <tr>
+                    <td class="method-col">KGW</td>
+                    <td class="num-cell">0.558</td>
+                    <td class="num-cell">0.661</td>
+                    <td class="num-cell" style="text-align: center; padding-right: 5% !important;">0.287</td>
+                    <td class="num-cell">0.523</td>
+                    <td class="num-cell">0.444</td>
+                    <td class="num-cell" style="text-align: center; padding-right: 5% !important;">0.134</td>
+                </tr>
+                <tr>
+                    <td class="method-col">PATTERN-MARK</td>
+                    <td class="num-cell">0.594</td>
+                    <td class="num-cell">0.652</td>
+                    <td class="num-cell" style="text-align: center; padding-right: 5% !important;">0.335</td>
+                    <td class="num-cell">0.551</td>
+                    <td class="num-cell">0.639</td>
+                    <td class="num-cell" style="text-align: center; padding-right: 5% !important;">0.287</td>
+                </tr>
+                <tr class="highlight-green">
+                    <td class="method-col special-text">dgMARK</td>
+                    <td class="num-cell"><strong>0.695</strong></td>
+                    <td class="num-cell"><strong>0.746</strong></td>
+                    <td class="num-cell" style="text-align: center; padding-right: 5% !important;"><strong>0.470</strong></td>
+                    <td class="num-cell"><strong>0.647</strong></td>
+                    <td class="num-cell"><strong>0.686</strong></td>
+                    <td class="num-cell" style="text-align: center; padding-right: 5% !important;"><strong>0.390</strong></td>
+                </tr>
+                <tr class="highlight-green">
+                    <td class="method-col indent-3-beam">dgMARK +3-beam</td>
+                    <td class="num-cell"><strong>0.695</strong></td>
+                    <td class="num-cell">0.701</td>
+                    <td class="num-cell" style="text-align: center; padding-right: 5% !important;">0.342</td>
+                    <td class="num-cell">0.636</td>
+                    <td class="num-cell">0.648</td>
+                    <td class="num-cell" style="text-align: center; padding-right: 5% !important;">0.262</td>
+                </tr>
+            </tbody>
+        </table>
+          <p>
+            <div style="height: 10px;"></div>
+            <b><i>Table 2.</b></i>
+            <b>Benchmark results.</b> Results on multiple dLLMs under greedy and multinomial sampling, 
+            comparing non-watermarked generation, probability-biasing baselines, and <span class="dnerf">dgMARK</span> (with and without 3-beam search).
+          </p>
+    </div>
+
+    <div class="content has-text-justified">
+      Table 2 reports benchmark results on MMLU, GSM8K, and HumanEval to measure downstream task performance under watermarking. 
+      We evaluate both greedy and multinomial sampling, comparing: (1) non-watermarked, (2) KGW, (3) PATTERN-MARK, (4) dgMARK, and (5) dgMARK with 3-beam search. 
+      Across benchmarks and sampling settings, <span class="dnerf">dgMARK</span> consistently preserves generation quality, exhibiting the smallest performance degradation compared to the probability-biasing schemes.
+    </div>
+
+
+      </div>
+    </div>
+  </div>
+
+
+</section>
+
+
+
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@article{hong2026dgmark,
+      title={dgMARK: Decoding-Guided Watermarking for Diffusion Language Models}, 
+      author={Pyo Min Hong and Albert No},
+      journal={arXiv preprint arXiv:2601.22985},
+      year={2026}</code></pre>
+  </div>
+</section>
+
+
+
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <a class="icon-link"
+         href="./static/videos/2601.22985v1.pdf">
+        <i class="fas fa-file-pdf"></i>
+      </a>
+      <!-- <a class="icon-link" href="https://github.com/keunhong" class="external-link" disabled>
+        <i class="fab fa-github"></i>
+      </a> -->
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is licensed under a <a rel="license"
+                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+          <p>
+            This webpage is adapted from <a
+              href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>.
+          </p>
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
