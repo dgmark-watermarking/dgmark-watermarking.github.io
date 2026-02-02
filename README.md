@@ -1,7 +1,6 @@
 
 This is the repository that contains source code for the [dMARK website](https://dmark-watermarking.github.io).
 
-If you find Nerfies useful for your work please cite:
 ```
 @article{hong2026dgmark,
   title = {dgMARK: Decoding-Guided Watermarking for Diffusion Language Models}, 
