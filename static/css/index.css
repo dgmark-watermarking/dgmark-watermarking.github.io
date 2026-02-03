@@ -16,8 +16,11 @@ body {
 
 .title-icon {
   height: 1em;
+  width: 1em;
   vertical-align: middle;
   margin-right: -0.2em;
+
+  display: inline-block;
 }
 
 .dnerf {
@@ -398,6 +401,7 @@ thead tr:nth-child(2) th {
     text-align: right !important;
     padding-right: 30px !important; 
     font-variant-numeric: tabular-nums;
+    white-space: nowrap;
 }
 .no-bold {
     font-weight: 400 !important; 
