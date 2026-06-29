@@ -30,6 +30,7 @@ body {
   z-index: 0;
 }
 
+
 .dnerf::before {
   content: "";
   position: absolute;
@@ -70,6 +71,138 @@ body {
   margin: 3rem 0;
 }
 
+
+.conference-tag{
+    position:absolute;
+
+    top:8.5rem;
+    right: clamp(20px, 6vw, 120px);
+
+    width:115px;
+    height:125px;
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+
+    transform:rotate(18deg);
+
+    border-radius:18px;
+
+    background:
+        linear-gradient(
+            155deg,
+            #FFFDF8 0%,
+            #FAEEE7 25%,
+            #F3E8D0 52%,
+            #DCE6DE 82%,
+            #BDCFC2 100%
+        );
+
+    border:1px solid rgba(255,255,255,.7);
+
+    box-shadow:
+        0 16px 35px rgba(0,0,0,.10),
+        0 4px 10px rgba(0,0,0,.06),
+        inset 0 1px rgba(255,255,255,.75);
+
+    overflow:hidden;
+
+    transition:.35s ease;
+
+    z-index:20;
+}
+
+.conference-tag:hover{
+    transform:rotate(18deg) translateY(-3px) scale(1.04);
+
+    box-shadow:
+        0 22px 45px rgba(0,0,0,.14),
+        0 8px 18px rgba(252,184,169,.25);
+}
+
+.conference-tag::before{
+
+    content:"";
+
+    position:absolute;
+
+    top:-30%;
+    left:-120%;
+
+    width:45%;
+    height:180%;
+
+    background:
+        linear-gradient(
+            to right,
+            transparent,
+            rgba(255,255,255,.75),
+            transparent
+        );
+
+    transform:rotate(25deg);
+
+    transition:.9s;
+}
+
+.conference-tag:hover::before{
+    left:150%;
+}
+
+.conf-icon{
+
+    font-size:1.6rem;
+    margin-bottom:6px;
+
+    filter:drop-shadow(0 1px 1px rgba(0,0,0,.15));
+}
+
+.conf-text{
+    display:flex;
+    flex-direction:column;
+    align-items:center;     
+    justify-content:center; 
+    width:100%;
+}
+
+.conf-name{
+
+    display:block;
+    font-weight:800;
+    font-size:1.05rem;
+    letter-spacing: 1.2px;
+    color:#3F5B52;
+}
+
+.conf-year{
+
+    display:block;
+    margin-top:2px;
+    font-weight:700;
+    font-size:.95rem;
+    letter-spacing: 0.5px;
+    color:#6A786F;
+}
+.conf-logo{
+    width:34px;
+    height:34px;
+    object-fit:contain;
+
+    margin-bottom:8px;
+}
+
+@media (max-width:768px){
+
+    .conference-tag{
+        display:none;
+    }
+    .mobile-badge{
+        display:inline-block;
+    }
+
+}
 
 .font-code {
         font-family: 'Source Code Pro', monospace;
@@ -170,6 +303,7 @@ body {
 }
 
 .author-block {
+  position:relative;
   display: inline-block;
 }
 
